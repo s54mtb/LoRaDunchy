@@ -22,7 +22,7 @@
   </DaveTm>
 
   <Target>
-    <TargetName>LoRaMultiSen</TargetName>
+    <TargetName>LoRa-MultiSensorProjectDemo</TargetName>
     <ToolsetNumber>0x4</ToolsetNumber>
     <ToolsetName>ARM-ADS</ToolsetName>
     <TargetOption>
