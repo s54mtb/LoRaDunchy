@@ -63,6 +63,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 #include "bsp.h"
 //#include "vcom.h"
 #include "sensors.h"
+#include "config.h"
 
 /*!
  *  \brief Unique Devices IDs register set ( STM32L0xxx )
@@ -381,7 +382,7 @@ void HW_AdcInit( void )
   if( AdcInitialized == false )
   {
     AdcInitialized = true;
-#if 0
+#ifdef BAT_LEVEL_MEASUREMENT
     GPIO_InitTypeDef initStruct;
 #endif
     
@@ -408,7 +409,7 @@ void HW_AdcInit( void )
     
 
     HAL_ADC_Init( &hadc );
-#if 0
+#ifdef BAT_LEVEL_MEASUREMENT
     initStruct.Mode =GPIO_MODE_ANALOG;
     initStruct.Pull = GPIO_NOPULL;
     initStruct.Speed = GPIO_SPEED_HIGH;
