@@ -23,38 +23,38 @@ Bottom view (silk screen)
 ## Connector pinout
 
 CN3				
- * 1 -	*PA9*	USART1_TX,	2C1_SCL	MCO	
- * 2 -	*PA10*	USART1_RX,	I2C1_SDA		
- * 3 -	*nRST*				
- * 4 -	*GND*				
- * 5 -	*NC*				
- * 6 -	*PB5*	SPI1_MOSI,	LPTIM1_IN1,	TIM3_CH2,	TIM22_CH2
- * 7 -	*PB6*	USART1_TX,	I2C1_SCL		
- * 8 -	*PB2*	LPTIM1_OUT			
- * 9 -	*PB7*	USART1_RX,	I2C1_SDA,	LPTIM1_IN2	
- * 10 -	*PA11*	SPI1_MISO,	EVENTOUT,	COMP1_OUT	
- * 11 -	*PH1*				
- * 12 -	*PA12*				
- * 13 -	*PB12*	SPI2_NSS,	EVENTOUT		
- * 14 -	*PB15*	SPI2_MOSI			
- * 15 -	*PB14*	SPI2_MISO,	I2C2_SDA,	TIM21_CH2	
+ * 1 -	**PA9**	USART1_TX,	2C1_SCL	MCO	
+ * 2 -	**PA10**	USART1_RX,	I2C1_SDA		
+ * 3 -	**nRST**				
+ * 4 -	**GND**				
+ * 5 -	**NC**				
+ * 6 -	**PB5**	SPI1_MOSI,	LPTIM1_IN1,	TIM3_CH2,	TIM22_CH2
+ * 7 -	**PB6**	USART1_TX,	I2C1_SCL		
+ * 8 -	**PB2**	LPTIM1_OUT			
+ * 9 -	**PB7**	USART1_RX,	I2C1_SDA,	LPTIM1_IN2	
+ * 10 -	**PA11**	SPI1_MISO,	EVENTOUT,	COMP1_OUT	
+ * 11 -	**PH1**				
+ * 12 -	**PA12**				
+ * 13 -	**PB12**	SPI2_NSS,	EVENTOUT		
+ * 14 -	**PB15**	SPI2_MOSI			
+ * 15 -	**PB14**	SPI2_MISO,	I2C2_SDA,	TIM21_CH2	
 
 CN4				
- * 1 -	*V+*				
- * 2 -	*GND*				
- * 3 -	*nRST*				
- * 4 -	*5V*				
- * 5 -	*PA8*	I2C3_SCL,	EVENTOUT		
- * 6 -	*PA5*	SPI1_SCK,	TIM2_CH1		
- * 7 -	*PB8*	I2C1_SCL			
- * 8 -	*PB9*	I2C1_SDA			
- * 9 -	*PA4*				
- * 10 -	*PA3*	TIM21_CH2,	TIM2_CH4,	USART2_RX,	LPUART1_RX
- * 11 -	*PA2*	TIM21_CH1,	TIM2_CH3,	USART2_TX,	LPUART1_TX
- * 12 -	*PA0*	TIM2_CH1			
- * 13 -	*PH0*				
- * 14 -	*3V3*				
- * 15 -	*PB13*	SPI2_SCK,	I2C2_SCL,	TIM21_CH1	
+ * 1 -	**V+**				
+ * 2 -	**GND**				
+ * 3 -	**nRST**				
+ * 4 -	**5V**				
+ * 5 -	**PA8**	I2C3_SCL,	EVENTOUT		
+ * 6 -	**PA5**	SPI1_SCK,	TIM2_CH1		
+ * 7 -	**PB8**	I2C1_SCL			
+ * 8 -	**PB9**	I2C1_SDA			
+ * 9 -	**PA4**				
+ * 10 -	**PA3**	TIM21_CH2,	TIM2_CH4,	USART2_RX,	LPUART1_RX
+ * 11 -	**PA2**	TIM21_CH1,	TIM2_CH3,	USART2_TX,	LPUART1_TX
+ * 12 -	**PA0**	TIM2_CH1			
+ * 13 -	**PH0**				
+ * 14 -	**3V3**				
+ * 15 -	**PB13**	SPI2_SCK,	I2C2_SCL,	TIM21_CH1	
  
  
 ## How to use with Keil uVision (free for STM32 F0/L0)
