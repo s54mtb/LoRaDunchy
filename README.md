@@ -9,7 +9,16 @@ Small board with arduino nano compatibile pinout with power management and Murat
 * Buck/Boost switching power supply for delivering stable 3,3V regardless of the batterz voltage
 * Battery fuel gauge on-board to control the real status of the battery
 
+Schematic diagram: 
 ![loradunchy_schematic_diagram](https://raw.githubusercontent.com/s54mtb/LoRaDunchy/master/hw/sch.PNG)
+
+Board view: 
+![loradunchy_board](https://raw.githubusercontent.com/s54mtb/LoRaDunchy/master/hw/board.PNG)
+
+
+Bottom view (silk screen)
+![loradunchy_bot?view](https://raw.githubusercontent.com/s54mtb/LoRaDunchy/master/hw/botview.PNG)
+
 
 ## Connector pinout
 
