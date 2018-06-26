@@ -48,6 +48,7 @@
 #include "sht31.h"
 #include "bme280.h"
 #include "config.h"
+#include "stc3100.h"
 
 extern I2C_HandleTypeDef SEN_hi2c1;
 

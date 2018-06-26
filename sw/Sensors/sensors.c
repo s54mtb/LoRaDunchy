@@ -40,12 +40,14 @@
 
 static HAL_StatusTypeDef SEN_I2C1_Init(void);
 
-
 /**
  * I2C handle
  */
 I2C_HandleTypeDef SEN_hi2c1;
 
+#ifdef BATTERY_FUEL_GAUGE
+	stc3100_device_info_t bat;
+#endif
 
 /**
   * @brief  This function initialize all sensors in the system.  
@@ -63,6 +65,15 @@ HAL_StatusTypeDef SensorsInit(void)
 #ifdef BME280_SENSOR 
 	bme280_init_dev(&SEN_hi2c1);
 #endif
+	
+#ifdef BATTERY_FUEL_GAUGE
+	bat.hi2c = &SEN_hi2c1;
+	Battery_Init(&bat);
+#endif
+	
+#ifdef BATTERY_CHARGER
+  stc3100_battery_chargerinit(CHARGER_STATUS_PORT, CHARGER_STATUS_PIN);
+#endif	
 	
 	return Status;
 }
@@ -96,9 +107,13 @@ static HAL_StatusTypeDef SEN_I2C1_Init(void)
 	GPIO_InitStruct.Alternate = GPIO_AF4_I2C1;
 	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+	
 	/* Peripheral clock enable */
 	__HAL_RCC_I2C1_CLK_ENABLE();
 
+//	__HAL_RCC_I2C1_FORCE_RESET();
+//	HAL_Delay(2);
+//	__HAL_RCC_I2C1_RELEASE_RESET();
 
 //	RCC->APB1ENR |= 1U<<21;  // Enable I2C clock
 
@@ -133,13 +148,20 @@ static HAL_StatusTypeDef SEN_I2C1_Init(void)
 
 void Sensor_readouts(sen_readout_t *readouts)
 {
-		uint16_t pm10, pm2_5;
+	//stc3100_device_info_t bat;
+	uint16_t pm10, pm2_5;
 	//uint8_t coeff;
 	HPM_Ack_t hpmack;
 	int32_t si7013_t, Tmp75_t, sht31_t, bme28_t;
 	int32_t si7013_rh, sht31_rh, bme280_rh;
 	int32_t bme280_press;
 
+  Battery_Get(&bat, BATTERY_PROP_UNIQUEID);
+  Battery_Get(&bat, BATTERY_PROP_VOLTAGE_NOW);  
+	Battery_Get(&bat, BATTERY_PROP_CURRENT_NOW);
+	Battery_Get(&bat, BATTERY_PROP_CAPACITY);
+	Battery_Get(&bat, BATTERY_PROP_TEMP);
+	Battery_Get(&bat, BATTERY_PROP_CHARGING);
 	HPM_get();
 	hpmack = HPM_GetAck();
 	if (hpmack == HPM_ACK)
