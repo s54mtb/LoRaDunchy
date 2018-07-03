@@ -43,19 +43,35 @@
 
 
 /** Enable measurement of battery voltage on port PA.4 */
-#define BAT_LEVEL_MEASUREMENT 1
+//#define BAT_LEVEL_MEASUREMENT 1
 
 /** Enable honeywell HPM particle sensor */ 
 #define HPM_SENSOR 1
 
 /** Enable BME280 temperature, pressure and humidity sensor */
-#define BME280_SENSOR 1
+//#define BME280_SENSOR 1
 
 /** Enable TMP75 temperature sensor */
-#define TMP75_SENSOR 1
+//#define TMP75_SENSOR 1
 
 /** Enable SI7013 RH/T Sensor */
 #define SI7013_SENSOR 1
+
+/** Enable SHT31 Sensor */
+//#define SHT31_SENSOR 1
+
+/** Battery fuel gauge */
+//#define BATTERY_FUEL_GAUGE 1
+/** Fuel Gauge Rsense resistance in mOhms */
+//#define STC3100_RSENSE_RESISTANCE				33.3e-3f     ///  Rsense resistance Ohm.
+
+/** On-board charger */
+//#define BATTERY_CHARGER 1
+
+#ifdef BATTERY_CHARGER
+	#define CHARGER_STATUS_PORT 		GPIOA				// charging status port
+	#define CHARGER_STATUS_PIN 			GPIO_PIN_11	// charging status pin
+#endif
 
 #endif
 

@@ -143,6 +143,10 @@ static LoRaMainCallback_t LoRaMainCallbacks = { HW_GetBatteryLevel,
                                           
 static TimerEvent_t TxTimer;
 
+sen_readout_t readouts;
+int getNewReadouts_flag = 1;
+
+
 /* !
  *Initialises the Lora Parameters
  */
@@ -159,8 +163,8 @@ static  LoRaParam_t LoRaParamInit= {LORAWAN_ADR_STATE,
   */
 
 int main( void )
-{
-		
+{	
+
   /* STM32 HAL library initialization*/
   HAL_Init();
   
@@ -186,18 +190,24 @@ int main( void )
   
   while( 1 )
   {
-    DISABLE_IRQ( );
+    //DISABLE_IRQ( );
     /* if an interrupt has occurred after DISABLE_IRQ, it is kept pending 
      * and cortex will not enter low power anyway  */
 
 #ifndef LOW_POWER_DISABLE
-    LPM_EnterLowPower( );
+    //LPM_EnterLowPower( );
 #endif
 
-    ENABLE_IRQ();
-		
-/** testing............. read the PM sensor */
-		
+    //ENABLE_IRQ();
+
+		// Get readouts within thread
+		if (getNewReadouts_flag>0)
+		{
+			HAL_Delay(100);
+			Sensor_readouts(&readouts);
+			getNewReadouts_flag = 0;
+		}
+
 
   }
 }
@@ -213,7 +223,6 @@ static void Send( void )
 
 	uint32_t i = 0;
 	
-	sen_readout_t readouts;
 	i = sizeof(readouts);
 
   if ( LORA_JoinStatus () != LORA_SET)
@@ -223,24 +232,14 @@ static void Send( void )
     return;
   }
 	
-  AppData.Port = LORAWAN_APP_PORT;
-	
-	Sensor_readouts(&readouts);
-	
+  AppData.Port = LORAWAN_APP_PORT;	
 	memcpy(AppData.Buff, &readouts, i);
-//	
-//	AppData.Buff[i++] = 0x01;
-//  AppData.Buff[i++] = 0x02;
-//	
-//  AppData.Buff[i++] = 0x03;
-//  AppData.Buff[i++] = 0x04;
-//	
-//  AppData.Buff[i++] = 0x05;
-//  AppData.Buff[i++] = 0x06;
 	
   AppData.BuffSize = i;
   
   LORA_send( &AppData, LORAWAN_DEFAULT_CONFIRM_MSG_STATE);
+	// set flag for new readouts top be read
+	getNewReadouts_flag = 1;
 	
 }
 

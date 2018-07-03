@@ -379,6 +379,18 @@
       <Groups>
         <Group>
           <GroupName>Doc/Setup</GroupName>
+          <Files>
+            <File>
+              <FileName>config.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\config.h</FilePath>
+            </File>
+            <File>
+              <FileName>Commissioning.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\Commissioning.h</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Drivers</GroupName>
@@ -717,21 +729,6 @@
               <FileName>SI7013.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Sensors\SI7013.c</FilePath>
-            </File>
-            <File>
-              <FileName>TMP75.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Sensors\TMP75.c</FilePath>
-            </File>
-            <File>
-              <FileName>sht31.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Sensors\sht31.c</FilePath>
-            </File>
-            <File>
-              <FileName>BME280.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\Sensors\BME280.c</FilePath>
             </File>
           </Files>
         </Group>

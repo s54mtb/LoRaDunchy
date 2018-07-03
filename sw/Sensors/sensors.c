@@ -148,20 +148,44 @@ static HAL_StatusTypeDef SEN_I2C1_Init(void)
 
 void Sensor_readouts(sen_readout_t *readouts)
 {
-	//stc3100_device_info_t bat;
+#ifdef HPM_SENSOR
 	uint16_t pm10, pm2_5;
-	//uint8_t coeff;
 	HPM_Ack_t hpmack;
-	int32_t si7013_t, Tmp75_t, sht31_t, bme28_t;
-	int32_t si7013_rh, sht31_rh, bme280_rh;
-	int32_t bme280_press;
+#endif
+	
+#ifdef SI7013_SENSOR
+	int32_t si7013_t;
+	int32_t si7013_rh;
+#endif
 
+#ifdef TMP75_SENSOR
+	int32_t Tmp75_t;
+#endif
+
+#ifdef SHT31_SENSOR
+  int32_t	sht31_t; 
+	int32_t	sht31_rh;
+#endif
+
+#ifdef BME280_SENSOR
+	int32_t	bme28_t;
+	int32_t	bme280_rh;
+	int32_t bme280_press;
+#endif
+	
+#ifdef BATTERY_FUEL_GAUGE
   Battery_Get(&bat, BATTERY_PROP_UNIQUEID);
   Battery_Get(&bat, BATTERY_PROP_VOLTAGE_NOW);  
 	Battery_Get(&bat, BATTERY_PROP_CURRENT_NOW);
 	Battery_Get(&bat, BATTERY_PROP_CAPACITY);
 	Battery_Get(&bat, BATTERY_PROP_TEMP);
 	Battery_Get(&bat, BATTERY_PROP_CHARGING);
+	readouts->battery = (uint16_t)(1000 * bat.rsoc);
+	readouts->current = (int8_t)(1000 * bat.current);
+	readouts->voltage = (uint8_t)(100 * (bat.voltage - 2.500f));
+#endif
+
+#ifdef HPM_SENSOR
 	HPM_get();
 	hpmack = HPM_GetAck();
 	if (hpmack == HPM_ACK)
@@ -169,22 +193,35 @@ void Sensor_readouts(sen_readout_t *readouts)
 		pm10 = HPM_LastReadout(HPM_READOUT_PM10);
 		pm2_5 = HPM_LastReadout(HPM_READOUT_PM2_5);
 	}
-	
-	si7013_measure_intemperature(&SEN_hi2c1, SI7013_ADDR, &si7013_t);
-	si7013_measure_humidity(&SEN_hi2c1, SI7013_ADDR, &si7013_rh);
-	Tmp75_Read_Int_Teperature(&SEN_hi2c1, Tmp75_SlaveAddress(Tmp75Addr_Zero, Tmp75Addr_Zero, Tmp75Addr_One), &Tmp75_t);
-	sht31_meas_oneshot_int(&SEN_hi2c1, SHT31_ADDR, SHT31_rep_High, &sht31_t, &sht31_rh);
-	bme280_int_readout(&bme28_t, &bme280_rh, &bme280_press);
-	
 	readouts->pm2_5 = pm2_5;
 	readouts->pm10 = pm10;
-	readouts->tmp75_T = Tmp75_t / 10;  // hundreds of deg. C
-	readouts->si7013_T = si7013_t / 10;
-	readouts->sht31_T = sht31_t / 10;
-	readouts->bme280_T = bme28_t / 10;
-	readouts->bme280_RH = bme280_rh / 1000;
-	readouts->si7013_RH = si7013_rh / 1000;
-	readouts->sht31_RH = sht31_rh / 1000;
-	readouts->bme280_p = bme280_press / 10000;
+#endif
+	
 
+#ifdef SI7013_SENSOR
+	si7013_measure_intemperature(&SEN_hi2c1, SI7013_ADDR, &si7013_t);  // return in m°C
+	si7013_measure_humidity(&SEN_hi2c1, SI7013_ADDR, &si7013_rh); 
+	readouts->si7013_T = (si7013_t) / 10;
+	readouts->si7013_RH = si7013_rh / 1000;
+#endif
+	
+#ifdef TMP75_SENSOR
+	Tmp75_Read_Int_Teperature(&SEN_hi2c1, Tmp75_SlaveAddress(Tmp75Addr_Zero, Tmp75Addr_Zero, Tmp75Addr_One), &Tmp75_t);
+	readouts->tmp75_T = (Tmp75_t) / 10;  // hundreds of deg. C
+#endif
+	
+#ifdef SHT31_SENSOR	
+	sht31_meas_oneshot_int(&SEN_hi2c1, SHT31_ADDR, SHT31_rep_High, &sht31_t, &sht31_rh);
+	readouts->sht31_T = (sht31_t) / 10;
+	readouts->sht31_RH = sht31_rh / 1000;
+#endif
+	
+#ifdef BME280_SENSOR
+	bme280_int_readout(&bme28_t, &bme280_rh, &bme280_press);
+	readouts->bme280_T = (bme28_t ) / 10;
+	readouts->bme280_RH = bme280_rh / 1000;
+	readouts->bme280_p = bme280_press / 10000;
+#endif
+	
+	
 }
