@@ -25,3 +25,5 @@ RH = 0xcc
 
 payload:34127856BBAACC00
 
+
+For hardware please check this project: http://e.pavlin.si/2018/07/03/particle-sensor-with-lora/
