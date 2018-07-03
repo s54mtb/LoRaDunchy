@@ -159,8 +159,9 @@ static  LoRaParam_t LoRaParamInit= {LORAWAN_ADR_STATE,
   */
 
 int main( void )
-{
-		
+{	
+	sen_readout_t readouts;
+
   /* STM32 HAL library initialization*/
   HAL_Init();
   
@@ -197,7 +198,8 @@ int main( void )
     ENABLE_IRQ();
 		
 /** testing............. read the PM sensor */
-		
+//			Sensor_readouts(&readouts);
+
 
   }
 }

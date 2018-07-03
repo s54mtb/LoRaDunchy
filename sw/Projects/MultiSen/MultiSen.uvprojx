@@ -379,6 +379,18 @@
       <Groups>
         <Group>
           <GroupName>Doc/Setup</GroupName>
+          <Files>
+            <File>
+              <FileName>config.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\config.h</FilePath>
+            </File>
+            <File>
+              <FileName>ttn.decoder</FileName>
+              <FileType>7</FileType>
+              <FilePath>.\ttn.decoder</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Drivers</GroupName>
@@ -732,6 +744,11 @@
               <FileName>BME280.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\Sensors\BME280.c</FilePath>
+            </File>
+            <File>
+              <FileName>STC3100.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\Sensors\STC3100.c</FilePath>
             </File>
           </Files>
         </Group>

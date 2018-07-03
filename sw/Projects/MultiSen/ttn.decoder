@@ -6,7 +6,12 @@ function Decoder(bytes, port) {
   var x;
   
   /*
-  	uint16_t pm2_5;		// PM 2.5 
+  
+  from sensors.h ...
+  
+typedef struct
+{
+	uint16_t pm2_5;		// PM 2.5 
 	uint16_t pm10;		// PM 10
 	int16_t tmp75_T;	// Temperature from TMP75 in 1/100 deg. C
 	int16_t si7013_T; // Temperature from SI7013 in 1/100 deg. C
@@ -16,6 +21,10 @@ function Decoder(bytes, port) {
 	uint8_t sht31_RH;	// Relative humidity from SHT31 in %RH
 	uint8_t bme280_RH;// Relative humidity from BME280 in %RH
 	uint16_t bme280_p;// Pressure from BME280, units 0,1 hPa
+	uint16_t battery; // Current battery RSOC in mAh
+	 int8_t current; 	// Battery current in mA (+ charging, - discharging)
+	uint8_t voltage;  // Battery voltage value = 100 * (Ubat[V] - 2,5V)
+} sen_readout_t;
 */
 
    if (port === 2) 
@@ -30,6 +39,9 @@ function Decoder(bytes, port) {
      x =  bytes[i++];  decoded.sht31_RH = x ;
      x =  bytes[i++];  decoded.bme280_RH = x ;
      x = bytes[i++] << 8 | bytes[i++];  decoded.bme280_p = x ;
+     x = bytes[i++] << 8 | bytes[i++];  decoded.battery = x ;
+     x =  bytes[i++];  decoded.current = x ;
+     x =  bytes[i++];  decoded.voltage = x ;	 
     }
 
   return decoded;

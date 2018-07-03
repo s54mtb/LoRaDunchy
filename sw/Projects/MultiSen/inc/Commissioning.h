@@ -66,7 +66,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 // Use values from TTN console->Applications->YourTTNapp->Devices->YourDeviceID
 
 //#include "Commissioning_demo.h"
-#include "Commissioning_nmpm_particle_002.h"
+#include "Commissioning_nmpm_particle_001.h"
 //#include "Commissioning-deviceIDxxx3.h"
 //#include "Commissioning-deviceIDxxx4.h"
 //#include "Commissioning-deviceIDxxx5.h"
