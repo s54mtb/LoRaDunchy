@@ -65,10 +65,16 @@
 /* Private define ------------------------------------------------------------*/
 
 
+
 /*!
- * Defines the application data transmission duty cycle. 5s, value in [ms].
+ * Testing... sensor emulation.
  */
-#define APP_TX_DUTYCYCLE                            6000
+//#define SIMULATED_SEN														1
+
+/*!
+ * Defines the application data transmission duty cycle. 10s, value in [ms].
+ */
+#define APP_TX_DUTYCYCLE                            30000
 /*!
  * LoRaWAN Adaptive Data Rate
  * @note Please note that when ADR is enabled the end-device should be static
@@ -78,7 +84,7 @@
  * LoRaWAN Default data Rate Data Rate
  * @note Please note that LORAWAN_DEFAULT_DATA_RATE is used only when ADR is disabled 
  */
-#define LORAWAN_DEFAULT_DATA_RATE DR_0
+#define LORAWAN_DEFAULT_DATA_RATE DR_4 /*DR_0*/
 /*!
  * LoRaWAN application port
  * @note do not use 224. It is reserved for certification
@@ -145,7 +151,9 @@ static TimerEvent_t TxTimer;
 
 sen_readout_t readouts;
 int getNewReadouts_flag = 1;
-
+int LoRaSend_flag = 0;
+static uint16_t JoinRequests = 0;
+static uint32_t countr = 0;
 
 /* !
  *Initialises the Lora Parameters
@@ -165,6 +173,8 @@ static  LoRaParam_t LoRaParamInit= {LORAWAN_ADR_STATE,
 int main( void )
 {	
 
+//	uint8_t apperrors = 0;
+
   /* STM32 HAL library initialization*/
   HAL_Init();
   
@@ -183,29 +193,52 @@ int main( void )
   /* Configure the Lora Stack*/
   LORA_Init( &LoRaMainCallbacks, &LoRaParamInit);
   
+  HAL_Delay(1000);
   LORA_Join();
   
   LoraStartTx( TX_ON_TIMER) ;
 	
-  
+	DISABLE_IRQ( );
+  HAL_Delay(100);
+	ENABLE_IRQ( );
+	
   while( 1 )
   {
-    //DISABLE_IRQ( );
-    /* if an interrupt has occurred after DISABLE_IRQ, it is kept pending 
-     * and cortex will not enter low power anyway  */
-
-#ifndef LOW_POWER_DISABLE
-    //LPM_EnterLowPower( );
-#endif
-
-    //ENABLE_IRQ();
-
+		HAL_Delay(10);
+		countr++; 
+		if (countr > 100*60*30) // just in case if something went wrong after 30 minutes
+		{
+			countr = 0;
+			LORA_Join();
+		}
+		
 		// Get readouts within thread
 		if (getNewReadouts_flag>0)
 		{
 			HAL_Delay(100);
-			Sensor_readouts(&readouts);
-			getNewReadouts_flag = 0;
+			
+#ifdef SIMULATED_SEN
+			readouts.pm10 = 10;
+			readouts.pm2_5 = 11;
+			readouts.si7013_RH = 65;
+			readouts.si7013_T = 23;
+#else
+			Sensor_readouts(&readouts);			
+#endif			
+				getNewReadouts_flag = 0;
+		}
+		
+		if (LoRaSend_flag > 0)
+		{
+			AppData.Port = LORAWAN_APP_PORT;	
+				memcpy(AppData.Buff, &readouts, sizeof(readouts));
+				
+				AppData.BuffSize = sizeof(readouts);
+				
+				LORA_send( &AppData, LORAWAN_DEFAULT_CONFIRM_MSG_STATE);
+				// set flag for new readouts top be read
+				getNewReadouts_flag = 1;	
+			  LoRaSend_flag = 0;
 		}
 
 
@@ -221,25 +254,18 @@ static void LORA_HasJoined( void )
 static void Send( void )
 {
 
-	uint32_t i = 0;
-	
-	i = sizeof(readouts);
 
   if ( LORA_JoinStatus () != LORA_SET)
   {
     /*Not joined, try again later*/
     LORA_Join();
+		JoinRequests++;
+		if (JoinRequests>20) 
+			NVIC_SystemReset(); // reset the sensor, could not Join
     return;
   }
 	
-  AppData.Port = LORAWAN_APP_PORT;	
-	memcpy(AppData.Buff, &readouts, i);
-	
-  AppData.BuffSize = i;
-  
-  LORA_send( &AppData, LORAWAN_DEFAULT_CONFIRM_MSG_STATE);
-	// set flag for new readouts top be read
-	getNewReadouts_flag = 1;
+	LoRaSend_flag = 1;
 	
 }
 
