@@ -69,12 +69,12 @@
 /*!
  * Testing... sensor emulation.
  */
-//#define SIMULATED_SEN														1
+#define SIMULATED_SEN														1
 
 /*!
  * Defines the application data transmission duty cycle. 10s, value in [ms].
  */
-#define APP_TX_DUTYCYCLE                            30000
+#define APP_TX_DUTYCYCLE                            90000
 /*!
  * LoRaWAN Adaptive Data Rate
  * @note Please note that when ADR is enabled the end-device should be static

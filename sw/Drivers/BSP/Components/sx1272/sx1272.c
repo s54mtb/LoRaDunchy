@@ -23,8 +23,8 @@
  /*******************************************************************************
   * @file    sx1272.c
   * @author  MCD Application Team
-  * @version V1.0.2
-  * @date    30-March-2018
+  * @version V1.0.3
+  * @date    10-July-2018
   * @brief   driver sx1272
   ******************************************************************************
   * @attention
@@ -60,7 +60,6 @@
 #include "radio.h"
 #include "sx1272.h"
 #include "timeServer.h"
-#include "delay.h"
 
 /*
  * Local types definition
@@ -1462,7 +1461,6 @@ void SX1272OnDio0Irq( void )
                     if( ( RadioEvents != NULL ) && ( RadioEvents->RxDone != NULL ) )
                     {
                         RadioEvents->RxDone( RxTxBuffer, SX1272.Settings.LoRaPacketHandler.Size, SX1272.Settings.LoRaPacketHandler.RssiValue, SX1272.Settings.LoRaPacketHandler.SnrValue );
-                        PRINTF( "rxDone\n\r" );
                     }
                 }
                 break;
@@ -1485,7 +1483,6 @@ void SX1272OnDio0Irq( void )
                 if( ( RadioEvents != NULL ) && ( RadioEvents->TxDone != NULL ) )
                 {
                     RadioEvents->TxDone( );
-                    PRINTF( "txDone\n\r" );
                 }
                 break;
             }
@@ -1538,7 +1535,6 @@ void SX1272OnDio1Irq( void )
                 if( ( RadioEvents != NULL ) && ( RadioEvents->RxTimeout != NULL ) )
                 {
                     RadioEvents->RxTimeout( );
-                    PRINTF( "rxTimeOut\n\r" );
                 }
                 break;
             default:

@@ -25,8 +25,8 @@
  /*******************************************************************************
   * @file    sx1276.c
   * @author  MCD Application Team
-  * @version V1.0.2
-  * @date    30-March-2018
+  * @version V1.0.3
+  * @date    10-July-2018
   * @brief   driver sx1276
   ******************************************************************************
   * @attention
@@ -63,7 +63,6 @@
 #include "radio.h"
 #include "sx1276.h"
 #include "timeServer.h"
-#include "delay.h"
 
 /*
  * Local types definition
@@ -1643,7 +1642,6 @@ void SX1276OnDio0Irq( void )
                     if( ( RadioEvents != NULL ) && ( RadioEvents->RxDone != NULL ) )
                     {
                         RadioEvents->RxDone( RxTxBuffer, SX1276.Settings.LoRaPacketHandler.Size, SX1276.Settings.LoRaPacketHandler.RssiValue, SX1276.Settings.LoRaPacketHandler.SnrValue );
-                        //PRINTF( "rxDone\n\r" );
                     }
                 }
                 break;
@@ -1666,7 +1664,6 @@ void SX1276OnDio0Irq( void )
                 if( ( RadioEvents != NULL ) && ( RadioEvents->TxDone != NULL ) )
                 {
                     RadioEvents->TxDone( );
-                    //PRINTF( "txDone\n\r" );
                 }
                 break;
             }
@@ -1719,7 +1716,6 @@ void SX1276OnDio1Irq( void )
                 if( ( RadioEvents != NULL ) && ( RadioEvents->RxTimeout != NULL ) )
                 {
                     RadioEvents->RxTimeout( );
-                    //PRINTF( "rxTimeOut\n\r" );
                 }
                 break;
             default:
