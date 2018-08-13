@@ -77,7 +77,7 @@
  */
 #define LORAWAN_APP_PORT                            2
 /*!
- * LoRaWAN default endNode class port
+ * LoRaWAN default endNode class
  */
 #define LORAWAN_DEFAULT_CLASS                       CLASS_B
 /*!
