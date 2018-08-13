@@ -60,8 +60,9 @@ Maintainer: Miguel Luis and Gregory Cristian
 #include "hw.h"
 #include "radio.h"
 #include "debug.h"
-#include "bsp.h"
+//#include "bsp.h"
 #include "vcom.h"
+#include "mlm32l0xx_hw_conf.h"
 
 /*!
  *  \brief Unique Devices IDs register set ( STM32L0xxx )
@@ -138,13 +139,15 @@ void HW_Init( void )
     
     TraceInit( );
     
-    BSP_sensor_Init( );
+//    BSP_sensor_Init( );
     
-            
     BSP_LED_Init( LED1 );
     BSP_LED_Init( LED2 );
-    BSP_LED_Init( LED3 );
-    BSP_LED_Init( LED4 );
+
+#ifdef USE_USART2
+    BSP_LED_Init( LED3 );  // PB6 --- USART1_TX
+    BSP_LED_Init( LED4 );  // PB7 --- USART1_RX
+#endif
 
     McuInitialized = true;
   }

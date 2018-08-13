@@ -22,6 +22,17 @@
 
   @page End_Node Readme file
  
+ 
+ @par How to use it
+ 
+ Copy template to new folder, e.g. MyNewProject
+ Open file MyNewProject\Core\inc\mlm32l0xx_hw_conf.h and uncomment USE_USART1 or USE_USART2 for debug messages
+	USART1 is PB7 (Rx) and PB6 (Tx) 
+	USART2 is PA2 (Rx) and PA3 (Tx) 
+	Rename file MyNewProject\LoRaWAN\App\inc\Commissioning_Template to file Commissioning.h
+	Edit Commissioning.h keys to follow your LoraWAN setup (LORAWAN_DEVICE_EUI, LORAWAN_JOIN_EUI, LORAWAN_APP_KEY and LORAWAN_NWK_KEY)
+	Adjust options in MyNewProject\LoRaWAN\App\inc\utilities_conf.h and MyNewProject\LoRaWAN\App\inc\hw_conf.h
+ 
   @verbatim
   ******************** (C) COPYRIGHT 2017 STMicroelectronics *******************
   * @file    End_Node/readme.txt 

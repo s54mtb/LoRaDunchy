@@ -65,6 +65,13 @@ Maintainer: Miguel Luis and Gregory Cristian
 #ifdef __cplusplus
  extern "C" {
 #endif
+	 
+	 
+/* Define which USART is used for debug IO */
+#define USE_USART1		1 
+//#define USE_USART2		1 
+
+
 
 /* Includes ------------------------------------------------------------------*/
 /* Exported types ------------------------------------------------------------*/
@@ -143,7 +150,53 @@ Maintainer: Miguel Luis and Gregory Cristian
 #define RTC_OUTPUT       DBG_RTC_OUTPUT
 
 #define RTC_Alarm_IRQn              RTC_IRQn
+
 /* --------------------------- USART HW definition -------------------------------*/
+//--------------  USART 1 ---------------------------------------
+// PB7 --- Rx, PB6 --- Tx
+#ifdef USE_USART1
+/* --------------------------- USART HW definition -------------------------------*/
+#define USARTx                           USART1
+#define USARTx_CLK_ENABLE()              __USART1_CLK_ENABLE();
+#define USARTx_RX_GPIO_CLK_ENABLE()      __GPIOB_CLK_ENABLE()
+#define USARTx_TX_GPIO_CLK_ENABLE()      __GPIOB_CLK_ENABLE() 
+#define DMAx_CLK_ENABLE()                __HAL_RCC_DMA1_CLK_ENABLE()
+
+#define USARTx_FORCE_RESET()             __USART1_FORCE_RESET()
+#define USARTx_RELEASE_RESET()           __USART1_RELEASE_RESET()
+
+
+#define USARTx_TX_PIN                  GPIO_PIN_6
+#define USARTx_TX_GPIO_PORT            GPIOB  
+#define USARTx_TX_AF                   GPIO_AF0_USART1
+#define USARTx_RX_PIN                  GPIO_PIN_7
+#define USARTx_RX_GPIO_PORT            GPIOB 
+#define USARTx_RX_AF                   GPIO_AF0_USART1
+
+/* Definition for USARTx's NVIC */
+#define USARTx_IRQn                      USART1_IRQn
+#define USARTx_IRQHandler                USART1_IRQHandler
+
+/* Definition for USARTx's DMA */
+#define USARTx_TX_DMA_CHANNEL             DMA1_Channel4
+
+/* Definition for USARTx's DMA Request */
+#define USARTx_TX_DMA_REQUEST             DMA_REQUEST_3
+
+/* Definition for USARTx's NVIC */
+#define USARTx_DMA_TX_IRQn                DMA1_Channel4_5_6_7_IRQn
+#define USARTx_DMA_TX_IRQHandler          DMA1_Channel4_5_6_7_IRQHandler
+
+#define USARTx_Priority 0
+#define USARTx_DMA_Priority 0
+
+
+#endif
+
+
+//--------------  USART 2 ----------------------------------------
+#ifdef USE_USART2
+
 #define USARTx                           USART2
 #define USARTx_CLK_ENABLE()              __USART2_CLK_ENABLE();
 #define USARTx_RX_GPIO_CLK_ENABLE()      __GPIOA_CLK_ENABLE()
@@ -177,6 +230,8 @@ Maintainer: Miguel Luis and Gregory Cristian
 
 #define USARTx_Priority 0
 #define USARTx_DMA_Priority 0
+
+#endif
 
 #define LED_Toggle( x )                 BSP_LED_Toggle( x );
 #define LED_On( x )                     BSP_LED_On( x );
