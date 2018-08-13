@@ -69,17 +69,17 @@
 /*!
  * Defines the application data transmission duty cycle. 5s, value in [ms].
  */
-#define APP_TX_DUTYCYCLE                            10000
+#define APP_TX_DUTYCYCLE                            5678
 /*!
  * LoRaWAN Adaptive Data Rate
  * @note Please note that when ADR is enabled the end-device should be static
  */
-#define LORAWAN_ADR_STATE LORAWAN_ADR_ON
+#define LORAWAN_ADR_STATE LORAWAN_ADR_OFF
 /*!
  * LoRaWAN Default data Rate Data Rate
  * @note Please note that LORAWAN_DEFAULT_DATA_RATE is used only when ADR is disabled 
  */
-#define LORAWAN_DEFAULT_DATA_RATE DR_0
+#define LORAWAN_DEFAULT_DATA_RATE DR_5
 /*!
  * LoRaWAN application port
  * @note do not use 224. It is reserved for certification
@@ -88,7 +88,7 @@
 /*!
  * LoRaWAN default endNode class port
  */
-#define LORAWAN_DEFAULT_CLASS                       CLASS_A
+#define LORAWAN_DEFAULT_CLASS                       CLASS_B
 /*!
  * LoRaWAN default confirm state
  */
@@ -186,7 +186,8 @@ int main( void )
   HW_Init();
   
   /* USER CODE BEGIN 1 */
-  /* USER CODE END 1 */
+  ENABLE_IRQ();
+	/* USER CODE END 1 */
   
   /*Disbale Stand-by mode*/
   LPM_SetOffMode(LPM_APPLI_Id , LPM_Disable );
@@ -208,11 +209,13 @@ int main( void )
      * and cortex will not enter low power anyway  */
 
 #ifndef LOW_POWER_DISABLE
-    LPM_EnterLowPower( );
+    //LPM_EnterLowPower( );
 #endif
 
     ENABLE_IRQ();
-    
+		//DelayMs( 2 );
+		
+		    
     /* USER CODE BEGIN 2 */
     /* USER CODE END 2 */
   }
@@ -258,7 +261,7 @@ static void Send( void )
   TimerStart( &TxLedTimer );  
 #endif
 
-  BSP_sensor_Read( &sensor_data );
+  //BSP_sensor_Read( &sensor_data );
 
 #ifdef CAYENNE_LPP
   uint8_t cchannel=0;
@@ -336,6 +339,7 @@ static void Send( void )
   AppData.Buff[i++] = altitudeGps & 0xFF;
 #endif  /* REGION_XX915 */
 #endif  /* CAYENNE_LPP */
+  i = 2;
   AppData.BuffSize = i;
   
   LORA_send( &AppData, LORAWAN_DEFAULT_CONFIRM_MSG_STATE);
