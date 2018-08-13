@@ -1,6 +1,6 @@
 ## How to use LoraDunchy software
 
-After installation of free Keil IDE (uVision for STM32 L0/F0) clone the repository and copy content of the [sw/Proj/LoraDunchyTemplate](https://github.com/s54mtb/LoRaDunchy/tree/master/sw/Proj/LoraDunchyTemplate) folder and that's your starting point. 
+After installation of free Keil IDE (uVision for STM32 L0/F0) clone the repository and copy content of the [sw/Proj/LoraDunchy](https://github.com/s54mtb/LoRaDunchy/tree/master/sw/Proj/LoraDunchy) folder and that's your starting point. 
 
 Next, register on the TheThings Network and create application. Within your application [register new device](https://www.thethingsnetwork.org/docs/devices/registration.html). 
 
