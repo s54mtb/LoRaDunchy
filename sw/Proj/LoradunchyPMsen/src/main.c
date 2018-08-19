@@ -61,7 +61,7 @@
 /*!
  * Defines the application data transmission duty cycle. 5s, value in [ms].
  */
-#define APP_TX_DUTYCYCLE                            10000
+#define APP_TX_DUTYCYCLE                            12345
 /*!
  * LoRaWAN Adaptive Data Rate
  * @note Please note that when ADR is enabled the end-device should be static
@@ -148,8 +148,10 @@ static  LoRaParam_t LoRaParamInit= {LORAWAN_ADR_STATE,
 
 /* Private functions ---------------------------------------------------------*/
 
-sen_readout_t readouts;
+static sen_readout_t readouts, readouts_isr;
 int getNewReadouts_flag = 1;
+volatile static int mutex_readouts=0;
+
 																		
 /**
   * @brief  Main program
@@ -193,20 +195,21 @@ int main( void )
   {
     LoRaMacProcess( );
 		//DelayMs( 2 );
-    DISABLE_IRQ( );
-    /* if an interrupt has occurred after DISABLE_IRQ, it is kept pending 
-     * and cortex will not enter low power anyway  */
+//    DISABLE_IRQ( );
+//    /* if an interrupt has occurred after DISABLE_IRQ, it is kept pending 
+//     * and cortex will not enter low power anyway  */
 
-#ifndef LOW_POWER_DISABLE
-    LPM_EnterLowPower( );
-#endif
+//#ifndef LOW_POWER_DISABLE
+//    LPM_EnterLowPower( );
+//#endif
 
-    ENABLE_IRQ();
+//    ENABLE_IRQ();
 		
 				// Get readouts within thread
 		if (getNewReadouts_flag>0)
 		{
-			HAL_Delay(100);			
+			mutex_readouts = 1;
+			HAL_Delay(50);			
 			Sensor_readouts(&readouts);	
 #if 0	
 /** Simulate readouts */			
@@ -215,8 +218,9 @@ int main( void )
 			readouts.si7013_T = 2789;
 			readouts.si7013_RH = 58;
 #endif
-			
 			getNewReadouts_flag = 0;
+			memcpy(&readouts_isr, &readouts, sizeof(readouts_isr));	
+			mutex_readouts = 0;
 		}
 		
   }
@@ -241,10 +245,13 @@ static void Send( void )
   }
   
   PRINTF("SEND REQUEST\n\r");
-	AppData.Port = LORAWAN_APP_PORT;	
-	memcpy(AppData.Buff, &readouts, sizeof(readouts));	
-	AppData.BuffSize = sizeof(readouts);
-	LORA_send( &AppData, LORAWAN_DEFAULT_CONFIRM_MSG_STATE);
+	if (mutex_readouts == 0)
+	{
+		AppData.Port = LORAWAN_APP_PORT;	
+		memcpy(AppData.Buff, &readouts_isr, sizeof(readouts_isr));	
+		AppData.BuffSize = sizeof(readouts_isr);
+		LORA_send( &AppData, LORAWAN_DEFAULT_CONFIRM_MSG_STATE);
+	}
 	
 	// set flag for new readouts to be read
 	getNewReadouts_flag = 1;	
