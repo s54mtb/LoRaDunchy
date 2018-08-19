@@ -40,7 +40,11 @@
 #include "HPM.h"
 #include "stm32l0xx.h"                  // Device header
 #include <string.h> 										// memcmp
+#include "mlm32l0xx_hw_conf.h"   				// USE_UARTx
 
+#ifdef USE_USART2
+#error "USART2 used by HPM sensor. Please change to USART1
+#endif
 
 /** Local functions */
 static HAL_StatusTypeDef HPM_SendCmd(uint8_t *cmd, uint8_t len, uint8_t waitack);
@@ -166,7 +170,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
   HPM_UART_Ready = SET;
 }
 
-
+#ifndef USE_USART1
 /**
   * @brief  Tx Transfer completed callback
   * @param  UartHandle: UART handle. 
@@ -178,7 +182,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
   /* Set transmission flag: transfer complete */
   HPM_UART_Ready = SET; 
 }
-
+#endif
 
 
 
