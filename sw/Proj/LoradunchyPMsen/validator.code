@@ -1,0 +1,14 @@
+function Validator(converted, port) {
+  // Return false if the decoded, converted
+  // message is invalid and should be dropped.
+
+   if (converted.pm10 > 1000) {
+     return false;
+   }
+
+   if (converted.pm2_5 > 1000) {
+     return false;
+   }
+
+  return true;
+}
