@@ -6,7 +6,7 @@ Small board with arduino nano compatibile pinout with power management and Murat
 ## Features
 * LoRa module: Murata ABZ
 * Single cell LiPo cell charger on-board with charging signal internally connected to PA11 (via jumper)
-* Buck/Boost switching power supply for delivering stable 3,3V regardless of the batterz voltage
+* Buck/Boost switching power supply for delivering stable 3,3V regardless of the battery voltage
 * Battery fuel gauge on-board to control the real status of the battery
 
 Schematic diagram: 
