@@ -68,7 +68,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 	 
 	 
 /* Define which USART is used for debug IO */
-#define USE_USART1		1 
+//#define USE_USART1		1 
 //#define USE_USART2		1 
 
 

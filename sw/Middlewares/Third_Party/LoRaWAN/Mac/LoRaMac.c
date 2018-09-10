@@ -4357,3 +4357,9 @@ void LoRaMacTestSetDutyCycleOn( bool enable )
         MacCtx.NvmCtx->DutyCycleOn = enable;
     }
 }
+
+
+uint32_t GetUplinkCounter(void)
+{
+	return MacCtx.McpsConfirm.UpLinkCounter;
+}

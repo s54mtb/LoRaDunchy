@@ -772,6 +772,9 @@
             </File>
           </Files>
         </Group>
+        <Group>
+          <GroupName>New Group</GroupName>
+        </Group>
       </Groups>
     </Target>
   </Targets>

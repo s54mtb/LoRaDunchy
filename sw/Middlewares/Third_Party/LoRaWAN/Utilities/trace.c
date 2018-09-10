@@ -73,12 +73,12 @@ __IO ITStatus TracePeripheralReady = SET;
  *         contains new trace data to transmit, start a new transmission.
  * @retval None
  */
-static void Trace_TxCpltCallback(void);
+//static void Trace_TxCpltCallback(void);
 
 /* Functions Definition ------------------------------------------------------*/
 void TraceInit( void )
 {
-  OutputInit(Trace_TxCpltCallback);
+//  OutputInit(Trace_TxCpltCallback);
 
   CircularQueue_Init(&MsgTraceQueue, MsgTraceQueueBuff, DBG_TRACE_MSG_QUEUE_SIZE, 0, CIRCULAR_QUEUE_SPLIT_IF_WRAPPING_FLAG);
 
@@ -110,7 +110,7 @@ int32_t TraceSend( const char *strFormat, ...)
     LPM_SetStopMode(LPM_UART_TX_Id , LPM_Disable );
 
     RESTORE_PRIMASK();
-    OutputTrace((uint8_t*)buffer, bufSize);
+//    OutputTrace((uint8_t*)buffer, bufSize);
   }
   else
   {
@@ -146,36 +146,36 @@ const char *TraceGetFileName(const char *fullpath)
 
 /* Private Functions Definition ------------------------------------------------------*/
 
-static void Trace_TxCpltCallback(void)
-{
-  uint8_t* buffer;
-  uint16_t bufSize;
+//static void Trace_TxCpltCallback(void)
+//{
+//  uint8_t* buffer;
+//  uint16_t bufSize;
 
-  BACKUP_PRIMASK();
+//  BACKUP_PRIMASK();
 
-  DISABLE_IRQ(); /**< Disable all interrupts by setting PRIMASK bit on Cortex*/
-  /* Remove element just sent to UART */
-  CircularQueue_Remove(&MsgTraceQueue,&bufSize);
-  //DBG_GPIO_SET(GPIOB, GPIO_PIN_13);
-  //DBG_GPIO_RST(GPIOB, GPIO_PIN_13);
-  /* Sense if new data to be sent */
-  buffer=CircularQueue_Sense(&MsgTraceQueue,&bufSize);
+//  DISABLE_IRQ(); /**< Disable all interrupts by setting PRIMASK bit on Cortex*/
+//  /* Remove element just sent to UART */
+//  CircularQueue_Remove(&MsgTraceQueue,&bufSize);
+//  //DBG_GPIO_SET(GPIOB, GPIO_PIN_13);
+//  //DBG_GPIO_RST(GPIOB, GPIO_PIN_13);
+//  /* Sense if new data to be sent */
+//  buffer=CircularQueue_Sense(&MsgTraceQueue,&bufSize);
 
-  if ( buffer != NULL) 
-  {
-    RESTORE_PRIMASK();
-    //DBG_GPIO_SET(GPIOB, GPIO_PIN_14);
-    //DBG_GPIO_RST(GPIOB, GPIO_PIN_14);
-    OutputTrace((uint8_t*)buffer, bufSize);
-  }
-  else
-  {
-    //DBG_GPIO_SET(GPIOB, GPIO_PIN_12);
+//  if ( buffer != NULL) 
+//  {
+//    RESTORE_PRIMASK();
+//    //DBG_GPIO_SET(GPIOB, GPIO_PIN_14);
+//    //DBG_GPIO_RST(GPIOB, GPIO_PIN_14);
+////    OutputTrace((uint8_t*)buffer, bufSize);
+//  }
+//  else
+//  {
+//    //DBG_GPIO_SET(GPIOB, GPIO_PIN_12);
 
-    LPM_SetStopMode(LPM_UART_TX_Id , LPM_Enable );
-    TracePeripheralReady = SET;
-    RESTORE_PRIMASK();
-  }
-}
+//    LPM_SetStopMode(LPM_UART_TX_Id , LPM_Enable );
+//    TracePeripheralReady = SET;
+//    RESTORE_PRIMASK();
+//  }
+//}
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

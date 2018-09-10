@@ -45,6 +45,7 @@
 #ifndef __HPM_h__
 #define __HPM_h__
 
+//#include "main.h"
 #include "stm32l0xx_hal.h"
 
 /* Commands */

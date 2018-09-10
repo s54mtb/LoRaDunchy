@@ -61,7 +61,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 #include "radio.h"
 #include "debug.h"
 //#include "bsp.h"
-#include "vcom.h"
+//#include "vcom.h"
 #include "mlm32l0xx_hw_conf.h"
 
 /*!
@@ -137,7 +137,7 @@ void HW_Init( void )
 
     HW_RTC_Init( );
     
-    TraceInit( );
+    //TraceInit( );
     
 //    BSP_sensor_Init( );
     
@@ -164,7 +164,7 @@ void HW_DeInit( void )
   
   Radio.IoDeInit( );
   
-  vcom_DeInit( );
+  //vcom_DeInit( );
    
   McuInitialized = false;
 }
@@ -180,7 +180,7 @@ static void HW_IoInit( void )
   
   Radio.IoInit( );
   
-  vcom_IoInit( );
+  //vcom_IoInit( );
 }
 
 /**
@@ -203,7 +203,7 @@ static void HW_IoDeInit( void )
   
   Radio.IoDeInit( );
   
-  vcom_IoDeInit( );
+  //vcom_IoDeInit( );
 }
 
 

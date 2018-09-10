@@ -50,18 +50,19 @@
 #include "lora.h"
 //#include "bsp.h"
 #include "timeServer.h"
-#include "vcom.h"
+//#include "vcom.h"
 #include "version.h"
 #include "sensors.h"
+#include "math.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 
 
 /*!
- * Defines the application data transmission duty cycle. 5s, value in [ms].
+ * Defines the application data transmission duty cycle. value in [ms].
  */
-#define APP_TX_DUTYCYCLE                            12345
+#define APP_TX_DUTYCYCLE          30000
 /*!
  * LoRaWAN Adaptive Data Rate
  * @note Please note that when ADR is enabled the end-device should be static
@@ -80,7 +81,7 @@
 /*!
  * LoRaWAN default endNode class
  */
-#define LORAWAN_DEFAULT_CLASS                       CLASS_B
+#define LORAWAN_DEFAULT_CLASS                       CLASS_A
 /*!
  * LoRaWAN default confirm state
  */
@@ -119,10 +120,10 @@ static void LORA_TxNeeded ( void );
 static void Send( void );
 
 /* start the tx process*/
-static void LoraStartTx(TxEventType_t EventType);
+//static void LoraStartTx(TxEventType_t EventType);
 
 /* tx timer callback function*/
-static void OnTxTimerEvent( void );
+//static void OnTxTimerEvent( void );
 
 /* Private variables ---------------------------------------------------------*/
 /* load Main call backs structure*/
@@ -136,7 +137,10 @@ static LoRaMainCallback_t LoRaMainCallbacks = { HW_GetBatteryLevel,
                                                 LORA_TxNeeded};
 
                                                
-static TimerEvent_t TxTimer;
+//static TimerEvent_t TxTimer;
+
+  static sen_readout_t readoutstat[10];
+  static sen_readout_t readouts;
 
 
 /* !
@@ -148,11 +152,28 @@ static  LoRaParam_t LoRaParamInit= {LORAWAN_ADR_STATE,
 
 /* Private functions ---------------------------------------------------------*/
 
-static sen_readout_t readouts, readouts_isr;
-int getNewReadouts_flag = 1;
-volatile static int mutex_readouts=0;
 
-																		
+void Stats(sen_readout_t *readin, sen_readout_t *readout, int num)
+{
+	int i;
+	uint32_t pm2_5avg       = 0;
+	uint32_t pm10avg        = 0;
+	int32_t  si7013_Tavg    = 0;
+	uint32_t si7013_RHavg   = 0;
+    
+	for (i=0; i<num; i++)
+	{
+    pm2_5avg      += readin[i].pm2_5;
+    pm10avg       += readin[i].pm10;
+    si7013_Tavg   += readin[i].si7013_T;
+    si7013_RHavg  += readin[i].si7013_RH;
+	}
+  readout->pm2_5      = pm2_5avg / 10;
+  readout->pm10       = pm10avg / 10;
+  readout->si7013_T   = si7013_Tavg / 10;
+  readout->si7013_RH  = si7013_RHavg / 10;
+}
+																	
 /**
   * @brief  Main program
   * @param  None
@@ -160,6 +181,8 @@ volatile static int mutex_readouts=0;
   */
 int main( void )
 {
+  int i; 																		
+
   /* STM32 HAL library initialization*/
   HAL_Init();
   
@@ -173,55 +196,49 @@ int main( void )
   HW_Init();
 	SensorsInit( );
 
-	Sensor_readouts(&readouts);	
+	Sensor_readouts(&readoutstat[0]);	// Some initial values
   
   /* USER CODE BEGIN 1 */
   ENABLE_IRQ();
 	/* USER CODE END 1 */
   
   /*Disbale Stand-by mode*/
-  LPM_SetOffMode(LPM_APPLI_Id , LPM_Disable );
+  //LPM_SetOffMode(LPM_APPLI_Id , LPM_Disable );
   
-  PRINTF("VERSION: %X\n\r", VERSION);
+  //PRINTF("VERSION: %X\n\r", VERSION);
   
   /* Configure the Lora Stack*/
   LORA_Init( &LoRaMainCallbacks, &LoRaParamInit);
-  
+
   LORA_Join();
-  
-  LoraStartTx( TX_ON_TIMER) ;
-  
+  //LoraStartTx( TX_ON_TIMER) ;
+
   while( 1 )
   {
     LoRaMacProcess( );
-		//DelayMs( 2 );
-//    DISABLE_IRQ( );
-//    /* if an interrupt has occurred after DISABLE_IRQ, it is kept pending 
-//     * and cortex will not enter low power anyway  */
-
-//#ifndef LOW_POWER_DISABLE
-//    LPM_EnterLowPower( );
-//#endif
-
-//    ENABLE_IRQ();
 		
-				// Get readouts within thread
-		if (getNewReadouts_flag>0)
+		HAL_Delay(100);
+		
+		for (i=0; i<10; i++)
 		{
-			mutex_readouts = 1;
-			HAL_Delay(50);			
-			Sensor_readouts(&readouts);	
+			Sensor_readouts(&readoutstat[i]);
+			HAL_Delay(APP_TX_DUTYCYCLE/22);
+		}
+		
+		Stats(readoutstat, &readouts, 10);
+		
+		HAL_Delay(100);		
+		
+			
 #if 0	
 /** Simulate readouts */			
-			readouts.pm2_5 = 12;
-			readouts.pm10 = 15;
-			readouts.si7013_T = 2789;
-			readouts.si7013_RH = 58;
+			readouts.pm2_5 = 25+15*sin((float)LastCounter/314.0f);
+			readouts.pm10 = 50+35*sin((float)LastCounter/157.0f);
+			readouts.si7013_T = 2500+500*sin((float)LastCounter/628.0f);
+			readouts.si7013_RH = 50+40*sin((float)LastCounter/628.0f);
 #endif
-			getNewReadouts_flag = 0;
-			memcpy(&readouts_isr, &readouts, sizeof(readouts_isr));	
-			mutex_readouts = 0;
-		}
+			
+		Send();
 		
   }
 }
@@ -229,10 +246,13 @@ int main( void )
 static void LORA_HasJoined( void )
 {
 #if( OVER_THE_AIR_ACTIVATION != 0 )
-  PRINTF("JOINED\n\r");
+  //PRINTF("JOINED\n\r");
 #endif
   LORA_RequestClass( LORAWAN_DEFAULT_CLASS );
 }
+
+
+extern uint32_t GetUplinkCounter(void);  // testing - from loramac
 
 static void Send( void )
 {
@@ -244,17 +264,19 @@ static void Send( void )
     return;
   }
   
-  PRINTF("SEND REQUEST\n\r");
-	if (mutex_readouts == 0)
+  //PRINTF("SEND REQUEST\n\r");
+	AppData.Port = LORAWAN_APP_PORT;	
+	memcpy(AppData.Buff, &readouts, sizeof(readouts));	
+	AppData.BuffSize = sizeof(readouts);
+	if (LORA_send( &AppData, LORAWAN_DEFAULT_CONFIRM_MSG_STATE))
 	{
-		AppData.Port = LORAWAN_APP_PORT;	
-		memcpy(AppData.Buff, &readouts_isr, sizeof(readouts_isr));	
-		AppData.BuffSize = sizeof(readouts_isr);
-		LORA_send( &AppData, LORAWAN_DEFAULT_CONFIRM_MSG_STATE);
+		// error!
+//		loraerrorcounter++;
 	}
-	
 	// set flag for new readouts to be read
-	getNewReadouts_flag = 1;	
+//	getNewReadouts_flag = 1;
+
+	
 
 }
 
@@ -262,7 +284,7 @@ static void Send( void )
 static void LORA_RxData( lora_AppData_t *AppData )
 {
   /* USER CODE BEGIN 4 */
-  PRINTF("PACKET RECEIVED ON PORT %d\n\r", AppData->Port);
+ // PRINTF("PACKET RECEIVED ON PORT %d\n\r", AppData->Port);
 
   switch (AppData->Port)
   {
@@ -315,40 +337,40 @@ static void LORA_RxData( lora_AppData_t *AppData )
   /* USER CODE END 4 */
 }
 
-static void OnTxTimerEvent( void )
-{
-  /*Wait for next tx slot*/
-  TimerStart( &TxTimer);
-  /*Send*/
-  Send( );
-}
+//static void OnTxTimerEvent( void )
+//{
+//  /*Wait for next tx slot*/
+//  TimerStart( &TxTimer);
+//  /*Send*/
+//  Send( );
+//}
 
-static void LoraStartTx(TxEventType_t EventType)
-{
-  if (EventType == TX_ON_TIMER)
-  {
-    /* send everytime timer elapses */
-    TimerInit( &TxTimer, OnTxTimerEvent );
-    TimerSetValue( &TxTimer,  APP_TX_DUTYCYCLE); 
-    OnTxTimerEvent();
-  }
-  else
-  {
-    /* send everytime button is pushed */
-    GPIO_InitTypeDef initStruct={0};
-  
-    initStruct.Mode =GPIO_MODE_IT_RISING;
-    initStruct.Pull = GPIO_PULLUP;
-    initStruct.Speed = GPIO_SPEED_HIGH;
+//static void LoraStartTx(TxEventType_t EventType)
+//{
+//  if (EventType == TX_ON_TIMER)
+//  {
+//    /* send everytime timer elapses */
+//    TimerInit( &TxTimer, OnTxTimerEvent );
+//    TimerSetValue( &TxTimer,  APP_TX_DUTYCYCLE); 
+//    OnTxTimerEvent();
+//  }
+//  else
+//  {
+//    /* send everytime button is pushed */
+//    GPIO_InitTypeDef initStruct={0};
+//  
+//    initStruct.Mode =GPIO_MODE_IT_RISING;
+//    initStruct.Pull = GPIO_PULLUP;
+//    initStruct.Speed = GPIO_SPEED_HIGH;
 
-    HW_GPIO_Init( USER_BUTTON_GPIO_PORT, USER_BUTTON_PIN, &initStruct );
-    HW_GPIO_SetIrq( USER_BUTTON_GPIO_PORT, USER_BUTTON_PIN, 0, Send );
-  }
-}
+//    HW_GPIO_Init( USER_BUTTON_GPIO_PORT, USER_BUTTON_PIN, &initStruct );
+//    HW_GPIO_SetIrq( USER_BUTTON_GPIO_PORT, USER_BUTTON_PIN, 0, Send );
+//  }
+//}
 
 static void LORA_ConfirmClass ( DeviceClass_t Class )
 {
-  PRINTF("switch to class %c done\n\r","ABC"[Class] );
+  //PRINTF("switch to class %c done\n\r","ABC"[Class] );
 
   /*Optionnal*/
   /*informs the server that switch has occurred ASAP*/

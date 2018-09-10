@@ -60,7 +60,7 @@ Maintainer: Miguel Luis and Gregory Cristian
 
 /* Includes ------------------------------------------------------------------*/
 #include "hw.h"
-#include "vcom.h"
+//#include "vcom.h"
 #include "mlm32l0xx_it.h"
 
 
@@ -204,12 +204,12 @@ void SysTick_Handler(void)
 }*/
 void USARTx_IRQHandler( void )
 {
-  vcom_IRQHandler();
+  //vcom_IRQHandler();
 }
 
 void USARTx_DMA_TX_IRQHandler( void )
 {
-  vcom_DMA_TX_IRQHandler();
+  //vcom_DMA_TX_IRQHandler();
 }
 
 void RTC_IRQHandler( void )

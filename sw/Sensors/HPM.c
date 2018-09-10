@@ -40,11 +40,7 @@
 #include "HPM.h"
 #include "stm32l0xx.h"                  // Device header
 #include <string.h> 										// memcmp
-#include "mlm32l0xx_hw_conf.h"   				// USE_UARTx
 
-#ifdef USE_USART2
-#error "USART2 used by HPM sensor. Please change to USART1
-#endif
 
 /** Local functions */
 static HAL_StatusTypeDef HPM_SendCmd(uint8_t *cmd, uint8_t len, uint8_t waitack);
@@ -170,7 +166,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *UartHandle)
   HPM_UART_Ready = SET;
 }
 
-#ifndef USE_USART1
+
 /**
   * @brief  Tx Transfer completed callback
   * @param  UartHandle: UART handle. 
@@ -182,7 +178,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
   /* Set transmission flag: transfer complete */
   HPM_UART_Ready = SET; 
 }
-#endif
+
 
 
 
@@ -311,9 +307,9 @@ static HAL_StatusTypeDef HPM_SendCmd(uint8_t *cmd, uint8_t len, uint8_t waitack)
 	if (Status == HAL_OK)
 	{
 		HPM_UART_Ready = RESET;
-		while ((HPM_UART_Ready != SET) & (i < 120))  // wait for rx or timeout 
+		while ((HPM_UART_Ready != SET) & (i < 800))  // wait for rx or timeout 
 		{
-			HAL_Delay(10);
+			HAL_Delay(1);
 			i++;
 		}
   }
@@ -359,6 +355,8 @@ HAL_StatusTypeDef HPM_get(void)
 	uint16_t i = 0;
 	HAL_StatusTypeDef Status;
 	
+	for (i=0; i<HPM_MAX_BUF; i++) HPM_RxBuf[i] = 0;
+	
 	Status = HPM_SendCmd((uint8_t *)HPM_STOP_AUTO_cmd, 4, 1);
 	if (Status != HAL_OK) return Status;
 	
@@ -370,9 +368,9 @@ HAL_StatusTypeDef HPM_get(void)
 	if (Status == HAL_OK)
 	{
 		HPM_UART_Ready = RESET;
-		while ((HPM_UART_Ready != SET) & (i < 120))  // wait for rx or timeout 
+		while ((HPM_UART_Ready != SET) & (i < 800))  // wait for rx or timeout 
 		{
-			HAL_Delay(10);
+			HAL_Delay(1);
 			i++;
 		}
 		if (HPM_CS_Check(HPM_RxBuf, 7, HPM_RxBuf[7]) == 1) // check received data signature

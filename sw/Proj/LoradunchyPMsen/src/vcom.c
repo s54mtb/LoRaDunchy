@@ -62,7 +62,7 @@ static void (*TxCpltCallback) (void);
 /* Functions Definition ------------------------------------------------------*/
 void vcom_Init(  void (*TxCb)(void) )
 {
-
+#ifndef NOTRACE
   /*Record Tx complete for DMA*/
   TxCpltCallback=TxCb;
   /*## Configure the UART peripheral ######################################*/
@@ -87,23 +87,30 @@ void vcom_Init(  void (*TxCb)(void) )
     /* Initialization Error */
     Error_Handler(); 
   }
+#endif
 }
 
 void vcom_Trace(  uint8_t *p_data, uint16_t size )
 {
+#ifndef NOTRACE
   HAL_UART_Transmit_DMA(&UartHandle,p_data, size);
+#endif
 }
 
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 {
+#ifndef NOTRACE
   /* buffer transmission complete*/
-   TxCpltCallback(); 
+   TxCpltCallback();
+#endif	
 	HPM_UART_Ready = SET;
 }
 
 void vcom_DMA_TX_IRQHandler(void)
 {
+#ifndef NOTRACE
   HAL_DMA_IRQHandler(UartHandle.hdmatx);
+#endif
 }
 
 void vcom_IRQHandler(void)
@@ -118,6 +125,8 @@ void vcom_DeInit(void)
 
 void HAL_UART_MspInit(UART_HandleTypeDef *huart)
 {
+#ifndef NOTRACE
+
   static DMA_HandleTypeDef hdma_tx;
   
   
@@ -162,6 +171,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef *huart)
   /* NVIC for USART, to catch the TX complete */
   HAL_NVIC_SetPriority(USARTx_IRQn, USARTx_DMA_Priority, 1);
   HAL_NVIC_EnableIRQ(USARTx_IRQn);
+#endif /* NOTRACE */
+
 }
 
 void HAL_UART_MspDeInit(UART_HandleTypeDef *huart)
@@ -189,6 +200,7 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef *huart)
 
 void vcom_IoInit(void)
 {
+#ifndef NOTRACE
   GPIO_InitTypeDef  GPIO_InitStruct={0};
     /* Enable GPIO TX/RX clock */
   USARTx_TX_GPIO_CLK_ENABLE();
@@ -207,6 +219,7 @@ void vcom_IoInit(void)
   GPIO_InitStruct.Alternate = USARTx_RX_AF;
 
   HAL_GPIO_Init(USARTx_RX_GPIO_PORT, &GPIO_InitStruct);
+#endif
 }
 
 void vcom_IoDeInit(void)

@@ -104,7 +104,9 @@ void DBG_Init(void)
 
 void Error_Handler(void)
 {
+	#if 0
   PRINTF("Error_Handler\n\r");
+	#endif
   while (1)
   {
     ;

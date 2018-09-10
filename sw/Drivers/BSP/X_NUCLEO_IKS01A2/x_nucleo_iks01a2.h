@@ -130,7 +130,7 @@ extern "C" {
    stuck if the I2C communication is corrupted.
    You may modify these timeout values depending on CPU frequency and application
    conditions (interrupts routines ...). */
-#define NUCLEO_I2C_EXPBD_TIMEOUT_MAX    0x1000 /*<! The value of the maximal timeout for BUS waiting loops */
+#define NUCLEO_I2C_EXPBD_TIMEOUT_MAX    100 /*<! The value of the maximal timeout for BUS waiting loops */
 
 /* Definition for interrupt Pins */
 #define LPS22H_INT1_O_GPIO_PORT           GPIOB

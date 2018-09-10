@@ -183,7 +183,7 @@ static void TraceBeaconInfo(MlmeIndication_t *mlmeIndication);
  */
 static void McpsConfirm( McpsConfirm_t *mcpsConfirm )
 {
-    TVL2( PRINTNOW(); PRINTF("APP> McpsConfirm STATUS: %s\r\n", EventInfoStatusStrings[mcpsConfirm->Status] ); )
+    //TVL2( PRINTNOW(); PRINTF("APP> McpsConfirm STATUS: %s\r\n", EventInfoStatusStrings[mcpsConfirm->Status] ); )
   
     if( mcpsConfirm->Status == LORAMAC_EVENT_INFO_STATUS_OK )
     {
@@ -224,7 +224,7 @@ static void McpsConfirm( McpsConfirm_t *mcpsConfirm )
  */
 static void McpsIndication( McpsIndication_t *mcpsIndication )
 {
-    TVL2( PRINTNOW(); PRINTF("APP> McpsInd STATUS: %s\r\n", EventInfoStatusStrings[mcpsIndication->Status] );)
+   // TVL2( PRINTNOW(); PRINTF("APP> McpsInd STATUS: %s\r\n", EventInfoStatusStrings[mcpsIndication->Status] );)
     
     lora_AppData_t AppData;
     if( mcpsIndication->Status != LORAMAC_EVENT_INFO_STATUS_OK )
@@ -306,7 +306,7 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
 {
     MibRequestConfirm_t mibReq;
 
-    TVL2( PRINTNOW(); PRINTF("APP> MlmeConfirm STATUS: %s\r\n", EventInfoStatusStrings[mlmeConfirm->Status] );)
+   // TVL2( PRINTNOW(); PRINTF("APP> MlmeConfirm STATUS: %s\r\n", EventInfoStatusStrings[mlmeConfirm->Status] );)
     
     switch( mlmeConfirm->MlmeRequest )
     {
@@ -374,7 +374,7 @@ static void MlmeConfirm( MlmeConfirm_t *mlmeConfirm )
                 mibReq.Param.PingSlotDatarate = DR_8;
                 LoRaMacMibSetRequestConfirm( &mibReq );
 #endif
-                TVL2( PRINTF("\r\n#= Switch to Class B done. =#r\n" );)
+               // TVL2( PRINTF("\r\n#= Switch to Class B done. =#r\n" );)
                 
                 /*notify upper layer*/
                 LoRaMainCallbacks->LORA_ConfirmClass(CLASS_B);
@@ -408,7 +408,7 @@ static void MlmeIndication( MlmeIndication_t *MlmeIndication )
 {
     MibRequestConfirm_t mibReq;
     
-    TVL2( PRINTNOW(); PRINTF("APP> MLMEInd STATUS: %s\r\n", EventInfoStatusStrings[MlmeIndication->Status] );    )
+   // TVL2( PRINTNOW(); PRINTF("APP> MLMEInd STATUS: %s\r\n", EventInfoStatusStrings[MlmeIndication->Status] );    )
 
     switch( MlmeIndication->MlmeIndication )
     {
@@ -425,7 +425,7 @@ static void MlmeIndication( MlmeIndication_t *MlmeIndication )
             mibReq.Param.Class = CLASS_A;
             LoRaMacMibSetRequestConfirm( &mibReq );
             
-            TVL2( PRINTF("\r\n#= Switch to Class A done. =# BEACON LOST\r\n" ); )
+         //   TVL2( PRINTF("\r\n#= Switch to Class A done. =# BEACON LOST\r\n" ); )
 
             LORA_BeaconReq();
             break;
@@ -438,7 +438,7 @@ static void MlmeIndication( MlmeIndication_t *MlmeIndication )
             }
             else
             {
-              TVL2( PRINTF( "BEACON NOT RECEIVED\n\r");)
+            //  TVL2( PRINTF( "BEACON NOT RECEIVED\n\r");)
             }
             break;
 
@@ -464,10 +464,10 @@ void LORA_Init (LoRaMainCallback_t *callbacks, LoRaParam_t* LoRaParam )
   
 #if( OVER_THE_AIR_ACTIVATION != 0 )
 
-  PPRINTF( "OTAA\n\r"); 
-  PPRINTF( "DevEui= %02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X\n\r", HEX8(DevEui));
-  PPRINTF( "AppEui= %02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X\n\r", HEX8(JoinEui));
-  PPRINTF( "AppKey= %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n\r", HEX16(AppKey));
+//  PPRINTF( "OTAA\n\r"); 
+//  PPRINTF( "DevEui= %02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X\n\r", HEX8(DevEui));
+//  PPRINTF( "AppEui= %02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X\n\r", HEX8(JoinEui));
+//  PPRINTF( "AppKey= %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n\r", HEX16(AppKey));
 #else
 
 #if (STATIC_DEVICE_ADDRESS != 1)
@@ -476,11 +476,11 @@ void LORA_Init (LoRaMainCallback_t *callbacks, LoRaParam_t* LoRaParam )
   // Choose a random device address
   DevAddr = randr( 0, 0x01FFFFFF );
 #endif
-  PPRINTF( "ABP\n\r"); 
-  PPRINTF( "DevEui= %02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X\n\r", HEX8(DevEui));
-  PPRINTF( "DevAdd=  %08X\n\r", DevAddr) ;
-  PPRINTF( "NwkSKey= %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n\r", HEX16(NwkSEncKey));
-  PPRINTF( "AppSKey= %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n\r", HEX16(AppSKey));
+//  PPRINTF( "ABP\n\r"); 
+//  PPRINTF( "DevEui= %02X-%02X-%02X-%02X-%02X-%02X-%02X-%02X\n\r", HEX8(DevEui));
+//  PPRINTF( "DevAdd=  %08X\n\r", DevAddr) ;
+//  PPRINTF( "NwkSKey= %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n\r", HEX16(NwkSEncKey));
+//  PPRINTF( "AppSKey= %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X %02X\n\r", HEX16(AppSKey));
 #endif
         LoRaMacPrimitives.MacMcpsConfirm = McpsConfirm;
         LoRaMacPrimitives.MacMcpsIndication = McpsIndication;
@@ -775,7 +775,7 @@ LoraErrorStatus LORA_RequestClass( DeviceClass_t newClass )
       case CLASS_B:
       {
 #ifndef LORAMAC_CLASSB_ENABLED
-        PRINTF( "warning: LORAMAC_CLASSB_ENABLED has not been defined at compilation\n\r");
+  //      PRINTF( "warning: LORAMAC_CLASSB_ENABLED has not been defined at compilation\n\r");
 #endif
         if (currentClass != CLASS_A)
         {
@@ -830,8 +830,8 @@ static void TraceUpLinkFrame(McpsConfirm_t *mcpsConfirm)
     mibReq.Type = MIB_DEVICE_CLASS;
     LoRaMacMibGetRequestConfirm( &mibReq );
   
-    TVL2( PRINTF("\r\n" );)
-    TVL2( PRINTNOW(); PRINTF("#= U/L FRAME %lu =# Class %c, Port %d, data size %d, pwr %d, ", \
+//    TVL2( PRINTF("\r\n" );)
+//    TVL2( PRINTNOW(); PRINTF("#= U/L FRAME %lu =# Class %c, Port %d, data size %d, pwr %d, ", \
                              mcpsConfirm->UpLinkCounter, \
                              "ABC"[mibReq.Param.Class], \
                              AppData.Port, \
@@ -841,7 +841,7 @@ static void TraceUpLinkFrame(McpsConfirm_t *mcpsConfirm)
     mibGet.Type  = MIB_CHANNELS_MASK;
     if( LoRaMacMibGetRequestConfirm( &mibGet ) == LORAMAC_STATUS_OK )
     {
-        TVL2( PRINTF( "Channel Mask ");)
+//       TVL2( PRINTF( "Channel Mask ");)
 #if defined( REGION_AS923 ) || defined( REGION_CN779 ) || \
     defined( REGION_EU868 ) || defined( REGION_IN865 ) || \
     defined( REGION_KR920 ) || defined( REGION_RU864 )
@@ -857,17 +857,17 @@ static void TraceUpLinkFrame(McpsConfirm_t *mcpsConfirm)
 
 #endif
         {
-            TVL2( PRINTF( "%04X ", mibGet.Param.ChannelsMask[i] );)
+            //TVL2( PRINTF( "%04X ", mibGet.Param.ChannelsMask[i] );)
         }
     }
 
-    TVL2( PRINTF("\r\n\r\n" );)
+    //TVL2( PRINTF("\r\n\r\n" );)
 } 
 
 
 static void TraceDownLinkFrame(McpsIndication_t *mcpsIndication)
 {
-    const char *slotStrings[] = { "1", "2", "C", "Ping-Slot", "Multicast Ping-Slot" };
+//    const char *slotStrings[] = { "1", "2", "C", "Ping-Slot", "Multicast Ping-Slot" };
     int32_t snr = 0;
     if( mcpsIndication->Snr & 0x80 ) // The SNR sign bit is 1
     {
@@ -881,14 +881,14 @@ static void TraceDownLinkFrame(McpsIndication_t *mcpsIndication)
         snr = ( mcpsIndication->Snr & 0xFF ) >> 2;
     }
 
-    TVL2( PRINTF("\r\n" );)
-    TVL2( PRINTNOW(); PRINTF("#= D/L FRAME %lu =# RxWin %s, Port %d, data size %d, rssi %d, snr %ld\r\n\r\n", \
-                             mcpsIndication->DownLinkCounter, \
-                             slotStrings[mcpsIndication->RxSlot], \
-                             mcpsIndication->Port, \
-                             mcpsIndication->BufferSize, \
-                             mcpsIndication->Rssi, \
-                             snr );)
+    //TVL2( PRINTF("\r\n" );)
+//    TVL2( PRINTNOW(); PRINTF("#= D/L FRAME %lu =# RxWin %s, Port %d, data size %d, rssi %d, snr %ld\r\n\r\n", \
+//                             mcpsIndication->DownLinkCounter, \
+//                             slotStrings[mcpsIndication->RxSlot], \
+//                             mcpsIndication->Port, \
+//                             mcpsIndication->BufferSize, \
+//                             mcpsIndication->Rssi, \
+//                             snr );)
 }  
 
 
@@ -907,12 +907,12 @@ static void TraceBeaconInfo(MlmeIndication_t *mlmeIndication)
         snr = ( mlmeIndication->BeaconInfo.Snr & 0xFF ) >> 2;
     }  
     
-    TVL2( PRINTF("\r\n" );)
-    TVL2( PRINTNOW(); PRINTF("#= BEACON %lu =#, GW desc %d, rssi %d, snr %ld\r\n\r\n", \
-                             mlmeIndication->BeaconInfo.Time, \
-                             mlmeIndication->BeaconInfo.GwSpecific.InfoDesc, \
-                             mlmeIndication->BeaconInfo.Rssi, \
-                             snr );)
+//    TVL2( PRINTF("\r\n" );)
+//    TVL2( PRINTNOW(); PRINTF("#= BEACON %lu =#, GW desc %d, rssi %d, snr %ld\r\n\r\n", \
+//                             mlmeIndication->BeaconInfo.Time, \
+//                             mlmeIndication->BeaconInfo.GwSpecific.InfoDesc, \
+//                             mlmeIndication->BeaconInfo.Rssi, \
+//                             snr );)
 }
   
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

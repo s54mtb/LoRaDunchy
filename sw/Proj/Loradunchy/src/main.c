@@ -208,6 +208,9 @@ static void LORA_HasJoined( void )
   LORA_RequestClass( LORAWAN_DEFAULT_CLASS );
 }
 
+extern uint32_t GetUplinkCounter(void);
+
+
 static void Send( void )
 {
   
@@ -227,11 +230,12 @@ static void Send( void )
 	AppData.Buff[i++]= 0x34;
 	AppData.Buff[i++]= 0x56;
 	AppData.Buff[i++]= 0x78;
-	AppData.Buff[i++]= 0x9a;
-
+	AppData.Buff[i++]= GetUplinkCounter() & 0xff;
+  
   AppData.BuffSize = i;
   
   LORA_send( &AppData, LORAWAN_DEFAULT_CONFIRM_MSG_STATE);
+	
  
 	
 }
