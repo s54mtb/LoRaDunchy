@@ -53,40 +53,12 @@ void Loradunchy_sensor_SetPM(uint16_t pm2_5, uint16_t pm10)
 uint8_t     Loradunchy_sensor_Init( void )
 {
   HPM_Init();
+	HPM_Reset();
+	
   return I2C_Loradunchy_Init();
 }
 
 
-//int32_t si7013_test(void)
-//{
-////	uint8_t buf[6];
-////  uint16_t val;
-//  int32_t temperature;
-//  
-//	/* Send the command */
-//  //I2C_Loradunchy_ReadData(0x80,0xE3, buf, 2);
-//  si7013_measure_intemperature(&I2C_Loradunchy_Handle, 0x40, &temperature);
-//  
-//  //val = buf[0]<<8 | buf[1];
-//  
-//  return temperature;
-//  
-//}
-
-
-//void Loradunchy_ReadHPMsensor(void)
-//{
-//	HPM_Ack_t hpmack;
-//  
-//  HPM_get();
-//	hpmack = HPM_GetAck();
-//	if (hpmack == HPM_ACK)
-//	{
-//		lastpm10 = HPM_LastReadout(HPM_READOUT_PM10);
-//		lastpm2_5 = HPM_LastReadout(HPM_READOUT_PM2_5);
-//	}
-
-//}
 
 
 void Loradunchy_Read_sensors(sen_readout_t *readouts)
@@ -106,20 +78,6 @@ void Loradunchy_Read_sensors(sen_readout_t *readouts)
   Tmp75_Read_Int_Teperature(&I2C_Loradunchy_Handle, Tmp75_SlaveAddress(Tmp75Addr_Zero, Tmp75Addr_Zero, Tmp75Addr_One), &Tmp75_t);
   readouts->tmp75_T = Tmp75_t;
   
-//  /** Sanitize other readouts */
-	
-//	HPM_get();
-//		hpmack = HPM_GetAck();
-//		if (hpmack == HPM_ACK)
-//		{
-//			pm10 = HPM_LastReadout(HPM_READOUT_PM10);
-//			pm2_5 = HPM_LastReadout(HPM_READOUT_PM2_5);
-//			readouts->pm2_5 = pm2_5;
-//			readouts->pm10 = pm10;
-//		}
-	
-//  readouts->pm10 = 0;
-//  readouts->pm2_5 = 0;
 	readouts->pm2_5 = lastpm2_5;
 	readouts->pm10 = lastpm10;
 

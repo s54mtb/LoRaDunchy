@@ -119,6 +119,8 @@ HAL_StatusTypeDef HPM_StartAuto(void);
 HAL_StatusTypeDef HPM_StopAuto(void);
 HAL_StatusTypeDef HPM_SetAdjCoeff(uint8_t Coeff);
 HAL_StatusTypeDef HPM_GetAdjCoeff(uint8_t *Coeff);
+void HPM_Power(uint8_t ppp);
+void HPM_Reset(void);
 
 
 #endif

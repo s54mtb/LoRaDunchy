@@ -53,6 +53,7 @@
 #include "vcom.h"
 #include "version.h"
 #include "loradunchy_sensors.h"
+#include "HPM.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -218,9 +219,15 @@ int main( void )
 		hpmack = HPM_GetAck();
 		if (hpmack == HPM_ACK)
 		{
+			if (pm10==0) pm10 = 10;
+			if (pm2_5==0) pm2_5 = 10;
 			pm10 = HPM_LastReadout(HPM_READOUT_PM10);
 			pm2_5 = HPM_LastReadout(HPM_READOUT_PM2_5);
 			Loradunchy_sensor_SetPM(pm2_5, pm10);
+		}
+		else
+		{
+			HPM_Reset();
 		}
 
     //Loradunchy_ReadHPMsensor();

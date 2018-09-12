@@ -56,8 +56,8 @@ UART_HandleTypeDef HPM_UartHandle;
 #define HPM_MAX_BUF 64
 //static uint8_t HPM_RxBuf[HPM_MAX_BUF];
 
-static uint16_t HPM_LastPM10;
-static uint16_t HPM_LastPM2_5;
+static uint16_t HPM_LastPM10=10;
+static uint16_t HPM_LastPM2_5=10;
 
 __IO ITStatus HPM_UART_Ready = RESET;
 
@@ -72,6 +72,7 @@ const uint8_t HPM_AUTOSEND_SIG_cmd[4] = HPM_AUTO_SEND_SIG;
 const uint8_t HPM_GET_COEFF_cmd[4] = HPM_GET_COEFF;
 const uint8_t HPM_NACK_cmd[2] = {0x96, 0x96};
 const uint8_t HPM_ACK_cmd[2] = {0xa5, 0xa5};
+
 
 
 /***************** UART low level functions ************/
@@ -138,6 +139,13 @@ HAL_StatusTypeDef HPM_Init(void)
   HAL_NVIC_SetPriority(USART2_IRQn, 0x1, 0);
   HAL_NVIC_EnableIRQ(USART2_IRQn);
 	
+	/*  Init PA0 for driving the supply pin for HPM sensor */
+  GPIO_InitStruct.Pin       = GPIO_PIN_0;
+  GPIO_InitStruct.Mode      = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull      = GPIO_PULLUP;
+  GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_VERY_HIGH;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);	
+	
 	return HAL_OK;
 
 }
@@ -181,10 +189,31 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *UartHandle)
 
 
 
+void HPM_Power(uint8_t ppp)
+{
+	if (ppp>0)
+	{
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);
+	}
+	else
+	{
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0, GPIO_PIN_SET);		
+	}
+	
+}
+
 
 /**************** End of UART Low level functions ******/
 
 
+
+void HPM_Reset(void)
+{
+	HPM_Power(0);
+	HAL_Delay(10);
+	HPM_Power(0);
+  HAL_Delay(100);
+}
 
 /**
   * Claculate checksum for automatic response mode 
@@ -262,6 +291,12 @@ HAL_StatusTypeDef HPM_get_auto(void)
 	uint8_t HPM_RxBuf[HPM_MAX_BUF];
 		
 	Status = HAL_UART_Receive_IT(&HPM_UartHandle, HPM_RxBuf, 32);
+	if (Status != HAL_OK)
+	{
+		HPM_Reset();
+		return Status;
+	}
+	
 	HPM_UART_Ready = RESET;
 	while ((HPM_UART_Ready != SET) & (i < 120))  // wait for rx or timeout 
 	{
@@ -333,6 +368,7 @@ static HAL_StatusTypeDef HPM_SendCmd(uint8_t *cmd, uint8_t len, uint8_t waitack)
 		}
 		else
 		{
+			HPM_Reset();
 			return Status;
 		}
 		
@@ -387,6 +423,7 @@ HAL_StatusTypeDef HPM_get(void)
   } 
 	else // receive error
 	{
+		HPM_Reset();
 		return Status;
 	}
 	
@@ -495,6 +532,7 @@ HAL_StatusTypeDef HPM_GetAdjCoeff(uint8_t *Coeff)
   } 
 	else // receive error
 	{
+		HPM_Reset();
 		return Status;
 	}
 	
