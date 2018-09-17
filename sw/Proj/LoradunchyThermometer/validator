@@ -1,0 +1,68 @@
+function Validator(converted, port) {
+  // Return false if the decoded, converted
+  // message is invalid and should be dropped.
+
+/*
+   if (port === 2 && converted.pm10 === 0) {
+     return false;
+   }
+   if (port === 2 && converted.pm2_5 === 0) {
+     return false;
+   }
+   */
+   if (port === 2 && converted.pm10 > 999) {
+     return false;
+   }
+   if (port === 2 && converted.pm2_5 > 999) {
+     return false;
+   }
+
+  if (port === 2 && converted.RH > 100) {
+     return false;
+   }
+   if (port === 2 && converted.RH <= 0) {
+     return false;
+   }
+
+  if (port === 2 && converted.T < -50) {
+     return false;
+   }
+   if (port === 2 && converted.T > 100) {
+     return false;
+   }
+
+  if (port === 3 && converted.T < -50) {
+     return false;
+   }
+   if (port === 3 && converted.T > 100) {
+     return false;
+   };
+
+   if (port === 3 && converted.voltage < 2.51) {
+     return false;
+   }
+
+   if (port === 3 && converted.voltage > 4.60 ) {
+     return false;
+   }
+   
+   if (port === 3 && converted.current > 2000 ) {
+     return false;
+   }
+   
+   if (port === 3 && converted.current < -1000  ) {
+     return false;
+   }
+
+   if (port === 3 && converted.battery < 0  ) {
+     return false;
+   }
+   if (port === 3 && converted.current > 10000  ) {
+     return false;
+   }
+
+   
+
+
+  return true;
+}
