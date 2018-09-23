@@ -54,6 +54,7 @@
 #include "version.h"
 #include "loradunchy_sensors.h"
 #include "HPM.h"
+#include "LoRaMacFCntHandler.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -235,8 +236,14 @@ int main( void )
   }
 }
 
+//extern LoRaMacFCntHandlerStatus_t LoRaMacSetFCntUp( uint32_t currentUp );
+
+
 static void LORA_HasJoined( void )
 {
+	// Uncomment for testing frame counter rollover
+	 // LoRaMacSetFCntUp(0x0000fffa);
+
 #if( OVER_THE_AIR_ACTIVATION != 0 )
   PRINTF("JOINED\n\r");
 #endif
@@ -253,6 +260,8 @@ static void Send( void )
   
   //uint8_t buf[4];
   sen_readout_t readouts;
+	uint32_t uplinkcounter;
+	
 //  int32_t temperature=0, humidity=0; 
 //  
 // uint16_t pm2_5=0;		// PM 2.5 
@@ -299,7 +308,11 @@ static void Send( void )
   AppData.Buff[i++] = (readouts.si7013_T>>8) & 0xff;
   AppData.Buff[i++] = readouts.si7013_RH;
   
-	AppData.Buff[i++]= GetUplinkCounter() & 0xff;
+    uplinkcounter = GetUplinkCounter();
+    if (uplinkcounter >= 0x0000ffff) {
+       NVIC_SystemReset();   // Reset everything
+    }
+	AppData.Buff[i++]= uplinkcounter & 0xff;
   
   AppData.BuffSize = i;
   

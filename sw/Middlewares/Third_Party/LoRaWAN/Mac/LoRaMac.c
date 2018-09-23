@@ -4363,3 +4363,4 @@ uint32_t GetUplinkCounter(void)
 {
 	return MacCtx.McpsConfirm.UpLinkCounter;
 }
+
