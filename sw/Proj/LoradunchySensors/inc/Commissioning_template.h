@@ -103,6 +103,17 @@
  ******************************************************************************
  ******************************************************************************
  */
+ 
+ 
+// Coordinates of the device (when using TTNmapper integration)
+#define LAT_DEG			45
+#define LAT_DEC     8105
+
+#define LON_DEG			15
+#define LON_DEC			2900
+
+#define ALT					330
+      
 
 /*!
  * When set to 1 the application uses the Over-the-Air activation procedure

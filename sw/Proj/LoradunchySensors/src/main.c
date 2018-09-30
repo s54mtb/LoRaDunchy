@@ -293,29 +293,48 @@ static void Send( void )
   
   uint32_t i = 0;
 
-  AppData.Port = LORAWAN_APP_PORT;
-//  AppData.Buff[i++] = 0x10;
-//  AppData.Buff[i++] = 0x21;
-//  AppData.Buff[i++] = 0x32;
-//  AppData.Buff[i++] = 0x43;
-//  AppData.Buff[i++] = 0x54;
-//  AppData.Buff[i++] = 0x65;
-  AppData.Buff[i++] = readouts.pm2_5 & 0xff;
-  AppData.Buff[i++] = (readouts.pm2_5>>8) & 0xff;
-  AppData.Buff[i++] = readouts.pm10 & 0xff;
-  AppData.Buff[i++] = (readouts.pm10>>8) & 0xff;
-  AppData.Buff[i++] = readouts.si7013_T & 0xff;
-  AppData.Buff[i++] = (readouts.si7013_T>>8) & 0xff;
-  AppData.Buff[i++] = readouts.si7013_RH;
-  
-    uplinkcounter = GetUplinkCounter();
-    if (uplinkcounter >= 0x0000ffff) {
-       NVIC_SystemReset();   // Reset everything
-    }
-	AppData.Buff[i++]= uplinkcounter & 0xff;
-  
-  AppData.BuffSize = i;
-  
+	uplinkcounter = GetUplinkCounter();
+	if (uplinkcounter >= 0x0000ffff) {
+		 NVIC_SystemReset();   // Reset everything
+	}
+	
+	if ((uplinkcounter % 10) == 0) 
+	{
+		// send coordinates (for ttnmapper) - every 10th packet
+		AppData.Port = 99;
+
+		AppData.Buff[i++] = LAT_DEG;
+		AppData.Buff[i++] = LAT_DEC & 0xff;
+		AppData.Buff[i++] = (LAT_DEC >> 8) & 0xff;
+		AppData.Buff[i++] = LON_DEG;
+		AppData.Buff[i++] = LON_DEC & 0xff;
+		AppData.Buff[i++] = (LON_DEC >> 8) & 0xff;
+		AppData.Buff[i++] = ALT & 0xff;
+		AppData.Buff[i++] = (ALT >> 8) & 0xff;
+	}
+	else
+	{
+
+		AppData.Port = LORAWAN_APP_PORT;
+	//  AppData.Buff[i++] = 0x10;
+	//  AppData.Buff[i++] = 0x21;
+	//  AppData.Buff[i++] = 0x32;
+	//  AppData.Buff[i++] = 0x43;
+	//  AppData.Buff[i++] = 0x54;
+	//  AppData.Buff[i++] = 0x65;
+		AppData.Buff[i++] = readouts.pm2_5 & 0xff;
+		AppData.Buff[i++] = (readouts.pm2_5>>8) & 0xff;
+		AppData.Buff[i++] = readouts.pm10 & 0xff;
+		AppData.Buff[i++] = (readouts.pm10>>8) & 0xff;
+		AppData.Buff[i++] = readouts.si7013_T & 0xff;
+		AppData.Buff[i++] = (readouts.si7013_T>>8) & 0xff;
+		AppData.Buff[i++] = readouts.si7013_RH;
+		
+		AppData.Buff[i++]= uplinkcounter & 0xff;
+		
+		AppData.BuffSize = i;
+	}
+		
   LORA_send( &AppData, LORAWAN_DEFAULT_CONFIRM_MSG_STATE);
 	
  

@@ -1,0 +1,106 @@
+function Decoder(bytes, port) {
+  // Decode an uplink message from a buffer
+  // (array) of bytes to an object of fields.
+  var decoded = {};
+  
+  var i = 0;
+  var x;
+  var tempH, tempL, mahL, mahH;
+  var TempInt16, mahInt16;
+  
+  var latdec, londec, latfrac, lonfrac, alt;
+  
+  // Fill  location
+  //decoded.lat = 46.5;
+  //decoded.lon = 14.8;
+  //decoded.alt = 2000;
+  //decoded.hdop = 2;
+
+  
+  switch (port) {
+
+  /* --------- 2 ----------------------------- */
+  /* PARTICLE sensors ------------------------ */
+    case 2:  
+	  
+	  /*
+	  
+	  from sensors.h ...
+	  
+	typedef struct
+	{
+		uint16_t pm2_5;		// PM 2.5 
+		uint16_t pm10;		// PM 10
+		int16_t si7013_T; // Temperature from SI7013 in 1/100 deg. C 
+		uint8_t si7013_RH;// Relative humidity from SI7013 in %RH
+	} sen_readout_t;
+	*/
+
+		x = bytes[i++] | bytes[i++] << 8;  decoded.pm2_5 = x ;
+		x = bytes[i++] | bytes[i++] << 8;  decoded.pm10 = x ;
+
+		// signed int16
+		tempL = bytes[i++]; tempH = bytes[i++];
+		TempInt16 = (tempH & 0x80 ? 0xFFFF<<16 : 0) | tempH<<8 | tempL;
+		decoded.T = ((TempInt16)/100)-3 ;
+		x = bytes[i++];  
+		x = x + 15;
+		if (x>99) x = 99;
+		decoded.RH = x ;
+	break;
+
+  /* --------- 3 ----------------------------- */
+  /* Temperature sensors --------------------- */
+    case 3:  
+		 x = bytes[i++] | bytes[i++] << 8;  decoded.pm2_5 = 1 ;
+		 x = bytes[i++] | bytes[i++] << 8;  decoded.pm10 = 1 ;
+		 
+		 // signed int16
+		 tempL = bytes[i++]; tempH = bytes[i++];
+		 TempInt16 = (tempH & 0x80 ? 0xFFFF<<16 : 0) | tempH<<8 | tempL;
+		 decoded.T = ((TempInt16)/100) ;
+		 x = bytes[i++];  /* humidity */
+		 if (x>99) x = 99;
+		 decoded.RH = 1 ;
+		 
+		 /* State of charge in mAh */
+		 x = bytes[i++] | bytes[i++] << 8;  decoded.battery = x ;
+
+        // signed int16
+		mahL = bytes[i++]; mahH = bytes[i++];
+		mahInt16 = (mahH & 0x80 ? 0xFFFF<<16 : 0) | mahH<<8 | mahL;
+		decoded.current = mahInt16 ;
+
+         x = bytes[i++]; 
+		 /* x = 100 * (Ubat[V] - 2,5V) */
+		 decoded.voltage = (x / 100) + 2.5;
+		
+	break;
+
+
+  /* --------- 99 ----------------------------- */
+  /* Location			  --------------------- */
+    case 99:  
+		latdec = bytes[i++];		
+		x = bytes[i++] | bytes[i++] << 8;  
+		latfrac = x*1.0;
+
+		londec = bytes[i++];		
+		x = bytes[i++] | bytes[i++] << 8;  
+		lonfrac = x*1.0;
+		
+		alt = bytes[i++] | bytes[i++] << 8;
+		
+		decoded.lat = latdec+latfrac/10000;
+		decoded.lon = londec+lonfrac/10000;
+		decoded.alt = alt;
+		decoded.hdop = 1;
+		
+	break;
+	
+
+	
+  }
+
+  return decoded;
+}
